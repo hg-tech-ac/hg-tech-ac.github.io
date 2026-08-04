@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08111f">
+  <title>TECH_3D | HG TECH AC</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../">HG TECH AC</a>
+    <a class="button ghost" href="../">장치 선택</a>
+  </header>
+
+  <main class="container">
+    <section class="hero room-hero">
+      <div>
+        <p class="eyebrow">DEVICE · TECH_3D</p>
+        <h1>3D 작업실</h1>
+        <p>기술실 안쪽 3D 작업실의 별도 에어컨 제어 화면입니다.</p>
+      </div>
+      <span class="status">장치 연결 전</span>
+    </section>
+
+    <section class="control-grid">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">MANUAL</p>
+            <h2>수동 제어</h2>
+          </div>
+          <span class="muted">상태 미확인</span>
+        </div>
+        <div class="command-buttons">
+          <span class="button on">켜기</span>
+          <span class="button off">끄기</span>
+        </div>
+        <p class="muted">현재는 화면 기본 틀이므로 버튼이 실제 장치에 명령을 보내지는 않습니다.</p>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">ROUTINE</p>
+            <h2>주간 자동화</h2>
+          </div>
+          <span class="status">설정 전</span>
+        </div>
+        <div class="schedule-grid">
+          <label>켜는 시간<input type="time" value="08:00" disabled></label>
+          <label>끄는 시간<input type="time" value="17:00" disabled></label>
+        </div>
+        <div class="days">
+          <span class="active">월</span><span class="active">화</span><span class="active">수</span><span class="active">목</span><span class="active">금</span><span>토</span><span>일</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="notice">
+      <strong>다음 연결 단계</strong>
+      <p>Apps Script와 Google Sheets를 연결한 뒤 로그인, 일정 저장, ESP32 명령 전송 기능을 추가합니다.</p>
+    </section>
+  </main>
+</body>
+</html>
