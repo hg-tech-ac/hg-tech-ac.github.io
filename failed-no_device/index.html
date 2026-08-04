@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07101c">
+  <title>장치 연결 오류 | HG TECH AC</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body class="error-page">
+  <main class="error-shell">
+    <section class="error-card">
+      <div class="error-icon" aria-hidden="true">!</div>
+      <p class="eyebrow">NO DEVICE CONNECTION</p>
+      <h1>장치에 연결할 수 없습니다</h1>
+      <p id="deviceName" class="error-device">에어컨 장치</p>
+      <p id="errorReason" class="muted">장치가 HiveMQ에 연결되어 있지 않습니다.</p>
+
+      <div class="error-actions">
+        <a class="button primary large" href="../admin/dashboard/">대시보드로 돌아가기</a>
+        <button id="retryButton" class="button ghost large" type="button">다시 확인</button>
+      </div>
+
+      <p class="small-note">ESP32 전원, 학교 Wi-Fi, HiveMQ 연결 및 장치 상태 토픽을 확인하세요.</p>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const deviceId = params.get('device') || '';
+    const deviceName = params.get('name') || deviceId || '에어컨 장치';
+    const reason = params.get('reason') || '장치가 HiveMQ에 연결되어 있지 않습니다.';
+
+    document.getElementById('deviceName').textContent = deviceId
+      ? `${deviceName} · ${deviceId}`
+      : deviceName;
+    document.getElementById('errorReason').textContent = reason;
+    document.getElementById('retryButton').addEventListener('click', () => {
+      location.replace('../admin/dashboard/');
+    });
+  </script>
+</body>
+</html>
