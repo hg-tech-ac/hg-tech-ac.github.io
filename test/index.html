@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07101c">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>기능 테스트</title>
+  <link rel="stylesheet" href="../assets/style.css?v=20260804-2142">
+  <link rel="stylesheet" href="../assets/test.css?v=20260804-2142">
+  <script src="../config.js?v=20260804-2142"></script>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script defer src="../assets/auth.js?v=20260804-2142"></script>
+  <script defer src="../assets/test.js?v=20260804-2142"></script>
+</head>
+<body class="test-page">
+  <header class="test-topbar">
+    <div>
+      <p class="eyebrow">SYSTEM TEST</p>
+      <h1>기능 테스트</h1>
+    </div>
+    <a class="button ghost compact" href="../admin/dashboard/">대시보드</a>
+  </header>
+
+  <main class="test-container">
+    <section class="test-summary-card">
+      <div>
+        <span>관리자 세션</span>
+        <strong id="sessionState">확인 중</strong>
+      </div>
+      <div>
+        <span>Apps Script</span>
+        <strong id="apiState">대기</strong>
+      </div>
+      <div>
+        <span>HiveMQ</span>
+        <strong id="mqttState">대기</strong>
+      </div>
+      <div>
+        <span>왕복 테스트</span>
+        <strong id="roundTripState">대기</strong>
+      </div>
+    </section>
+
+    <section class="test-card">
+      <div class="test-heading">
+        <div>
+          <p class="eyebrow">CONNECTION</p>
+          <h2>서버·MQTT 점검</h2>
+        </div>
+        <button id="runAllButton" class="button primary" type="button">전체 테스트</button>
+      </div>
+      <div class="test-actions two-columns">
+        <button id="apiTestButton" class="test-action" type="button">
+          <strong>Apps Script 확인</strong>
+          <span>health API 응답을 검사합니다.</span>
+        </button>
+        <button id="mqttTestButton" class="test-action" type="button">
+          <strong>HiveMQ 왕복 확인</strong>
+          <span>TEST 토픽에 ping을 보내고 수신합니다.</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="test-card">
+      <div class="test-heading">
+        <div>
+          <p class="eyebrow">DEVICE SIMULATOR</p>
+          <h2>장치 상태 시뮬레이션</h2>
+        </div>
+        <span class="test-note">실제 ESP32 제어 없음</span>
+      </div>
+
+      <div class="device-test-grid">
+        <article class="device-test-card" data-device="TECH_1">
+          <div class="device-test-title">
+            <div><strong>기술실 1번</strong><small>TECH_1 · Servo 1</small></div>
+            <span id="badge-TECH_1" class="device-badge offline">오프라인</span>
+          </div>
+          <div class="sensor-mini-grid">
+            <span>온도 <strong id="temp-TECH_1">--.-°C</strong></span>
+            <span>습도 <strong id="humidity-TECH_1">--%</strong></span>
+          </div>
+          <div class="device-test-actions">
+            <button type="button" data-test-action="online" data-device="TECH_1">온라인</button>
+            <button type="button" data-test-action="telemetry" data-device="TECH_1">센서 변경</button>
+            <button type="button" data-test-action="power" data-device="TECH_1">전원 결과</button>
+          </div>
+        </article>
+
+        <article class="device-test-card" data-device="TECH_2">
+          <div class="device-test-title">
+            <div><strong>기술실 2번</strong><small>TECH_2 · Servo 2</small></div>
+            <span id="badge-TECH_2" class="device-badge offline">오프라인</span>
+          </div>
+          <div class="sensor-mini-grid">
+            <span>온도 <strong id="temp-TECH_2">--.-°C</strong></span>
+            <span>습도 <strong id="humidity-TECH_2">--%</strong></span>
+          </div>
+          <div class="device-test-actions">
+            <button type="button" data-test-action="online" data-device="TECH_2">온라인</button>
+            <button type="button" data-test-action="telemetry" data-device="TECH_2">센서 변경</button>
+            <button type="button" data-test-action="power" data-device="TECH_2">전원 결과</button>
+          </div>
+        </article>
+
+        <article class="device-test-card" data-device="TECH_3D">
+          <div class="device-test-title">
+            <div><strong>3D 작업실</strong><small>TECH_3D · Servo 1</small></div>
+            <span id="badge-TECH_3D" class="device-badge offline">오프라인</span>
+          </div>
+          <div class="sensor-mini-grid">
+            <span>온도 <strong id="temp-TECH_3D">--.-°C</strong></span>
+            <span>습도 <strong id="humidity-TECH_3D">--%</strong></span>
+          </div>
+          <div class="device-test-actions">
+            <button type="button" data-test-action="online" data-device="TECH_3D">온라인</button>
+            <button type="button" data-test-action="telemetry" data-device="TECH_3D">센서 변경</button>
+            <button type="button" data-test-action="power" data-device="TECH_3D">전원 결과</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="test-card">
+      <div class="test-heading">
+        <div>
+          <p class="eyebrow">ROUTINE</p>
+          <h2>루틴 유효성 검사</h2>
+        </div>
+      </div>
+
+      <div class="routine-test-grid">
+        <label>켜지는 시간<input id="testOnTime" type="time" min="07:30" max="15:59" value="07:30"></label>
+        <label>꺼지는 시간<input id="testOffTime" type="time" min="07:31" max="16:00" value="16:00"></label>
+      </div>
+      <div class="routine-test-days">
+        <button class="test-day selected" type="button" data-day="MON">월</button>
+        <button class="test-day selected" type="button" data-day="TUE">화</button>
+        <button class="test-day selected" type="button" data-day="WED">수</button>
+        <button class="test-day selected" type="button" data-day="THU">목</button>
+        <button class="test-day selected" type="button" data-day="FRI">금</button>
+        <button class="test-day" type="button" data-day="SAT">토</button>
+        <button class="test-day" type="button" data-day="SUN">일</button>
+      </div>
+      <div class="test-inline-result">
+        <p id="routineTestResult">검사 대기 중</p>
+        <button id="routineTestButton" class="button primary" type="button">루틴 검사</button>
+      </div>
+    </section>
+
+    <section class="test-card">
+      <div class="test-heading">
+        <div>
+          <p class="eyebrow">ALERT</p>
+          <h2>관리자 경고 테스트</h2>
+        </div>
+      </div>
+      <div class="test-actions two-columns">
+        <button id="coolingAlertButton" class="test-action warning" type="button">
+          <strong>냉방 효과 없음</strong>
+          <span>10분 후 온도 미하락 경고를 표시합니다.</span>
+        </button>
+        <button id="mqttFailureButton" class="test-action danger" type="button">
+          <strong>MQTT 연결 실패</strong>
+          <span>1분 후 표시되는 오류 팝업을 즉시 확인합니다.</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="test-card log-card">
+      <div class="test-heading">
+        <div>
+          <p class="eyebrow">LOG</p>
+          <h2>테스트 로그</h2>
+        </div>
+        <button id="clearLogButton" class="button ghost compact" type="button">지우기</button>
+      </div>
+      <pre id="testLog">테스트 페이지를 불러왔습니다.</pre>
+    </section>
+  </main>
+
+  <div id="testModal" class="modal-overlay" hidden>
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="testModalTitle">
+      <div id="testModalIcon" class="modal-icon">!</div>
+      <h2 id="testModalTitle">알림</h2>
+      <p id="testModalMessage" class="modal-message"></p>
+      <div id="testModalDetails" class="modal-details" hidden></div>
+      <div class="modal-actions">
+        <button id="testModalClose" class="button ghost" type="button">닫기</button>
+        <button id="testModalAction" class="button primary" type="button" hidden>확인</button>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
