@@ -2,64 +2,19 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#08111f">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07101c">
   <title>HG TECH AC</title>
-  <link rel="stylesheet" href="./assets/style.css">
   <script src="./config.js"></script>
-  <script defer src="./assets/app.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="./">HG TECH AC</a>
-    <span id="serverState" class="stage">API 연결 전</span>
-  </header>
-
-  <main class="container compact-container">
-    <section class="hero center-hero">
-      <p class="eyebrow">TECH ROOM POWER CONTROL</p>
-      <h1>기술실 에어컨</h1>
-      <p>사용할 에어컨의 전원 버튼을 누르세요.</p>
-    </section>
-
-    <section class="power-grid" aria-label="에어컨 전원 제어">
-      <article class="power-card">
-        <span class="device-id">TECH_1</span>
-        <h2>기술실 1번</h2>
-        <button class="power-button" type="button" data-device="TECH_1" data-name="기술실 1번" aria-label="기술실 1번 전원버튼 누르기">
-          <span class="power-icon" aria-hidden="true">⏻</span>
-          <span>전원</span>
-        </button>
-        <p class="command-state" id="state-TECH_1">대기 중</p>
-      </article>
-
-      <article class="power-card">
-        <span class="device-id">TECH_2</span>
-        <h2>기술실 2번</h2>
-        <button class="power-button" type="button" data-device="TECH_2" data-name="기술실 2번" aria-label="기술실 2번 전원버튼 누르기">
-          <span class="power-icon" aria-hidden="true">⏻</span>
-          <span>전원</span>
-        </button>
-        <p class="command-state" id="state-TECH_2">대기 중</p>
-      </article>
-
-      <article class="power-card">
-        <span class="device-id">TECH_3D</span>
-        <h2>3D 작업실</h2>
-        <button class="power-button" type="button" data-device="TECH_3D" data-name="3D 작업실" aria-label="3D 작업실 전원버튼 누르기">
-          <span class="power-icon" aria-hidden="true">⏻</span>
-          <span>전원</span>
-        </button>
-        <p class="command-state" id="state-TECH_3D">대기 중</p>
-      </article>
-    </section>
-
-    <section class="notice slim-notice">
-      <strong>현재 제어 방식</strong>
-      <p>각 버튼은 켜기 또는 끄기를 구분하지 않고, 해당 컨트롤러의 물리 전원 버튼을 한 번 누르는 명령을 생성합니다.</p>
-    </section>
-  </main>
-
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <noscript>이 사이트는 JavaScript가 필요합니다.</noscript>
+  <script>
+    (() => {
+      const key = window.HG_CONFIG?.SESSION_KEY || 'hgTechAcAdminSession';
+      const session = localStorage.getItem(key);
+      location.replace(session ? './admin/dashboard/' : './admin/login/');
+    })();
+  </script>
 </body>
 </html>
