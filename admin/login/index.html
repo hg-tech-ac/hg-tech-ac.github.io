@@ -4,11 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07101c">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>관리자 로그인</title>
-  <link rel="stylesheet" href="../../assets/style.css">
-  <link rel="stylesheet" href="../../assets/login-v2.css">
-  <script src="../../config.js"></script>
-  <script defer src="../../assets/auth.js"></script>
+  <link rel="stylesheet" href="../../assets/style.css?v=20260804-2218">
+  <link rel="stylesheet" href="../../assets/login-v2.css?v=20260804-2218">
+  <script src="../../config.js?v=20260804-2218"></script>
+  <script defer src="../../assets/auth.js?v=20260804-2218"></script>
 </head>
 <body class="auth-page">
   <main class="auth-shell">
@@ -61,7 +64,29 @@
         overlay.hidden = !busy;
       }
 
-      setBusy(true, '인증 상태 확인 중입니다', '기존 관리자 로그인 상태를 확인하고 있습니다.');
+      function showError(text) {
+        message.textContent = text;
+        message.className = 'form-message error';
+      }
+
+      if (!window.HG_AUTH || !window.HG_CONFIG?.API_URL) {
+        setBusy(false);
+        showError('로그인 설정을 불러오지 못했습니다. 페이지를 새로고침하세요.');
+        return;
+      }
+
+      setBusy(true, '서버 연결 확인 중입니다', 'Apps Script 서버와 관리자 인증 상태를 확인하고 있습니다.');
+
+      try {
+        const health = await window.HG_AUTH.jsonp({ action: 'health' });
+        if (!health?.ok) throw new Error(health?.message || '서버 응답이 올바르지 않습니다.');
+      } catch (error) {
+        localStorage.removeItem(window.HG_AUTH.sessionKey);
+        setBusy(false);
+        showError(error.message || 'Apps Script 서버에 연결하지 못했습니다.');
+        return;
+      }
+
       try {
         const existing = await window.HG_AUTH.validateSession();
         if (existing) {
@@ -71,8 +96,9 @@
           return;
         }
       } catch (_) {
-        // 저장된 세션이 없거나 만료된 경우 일반 로그인 화면을 표시합니다.
+        localStorage.removeItem(window.HG_AUTH.sessionKey);
       }
+
       setBusy(false);
       document.getElementById('userId').focus();
 
@@ -80,22 +106,26 @@
         event.preventDefault();
         if (submitting) return;
 
+        const userId = document.getElementById('userId').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (!userId || !password) {
+          showError('관리자 ID와 비밀번호를 입력하세요.');
+          return;
+        }
+
         message.textContent = '';
         message.className = 'form-message';
         setBusy(true, '로그인 시도중입니다', '아이디와 비밀번호를 확인하고 있습니다. 잠시만 기다려 주세요.');
 
         try {
-          await window.HG_AUTH.login(
-            document.getElementById('userId').value.trim(),
-            document.getElementById('password').value
-          );
+          await window.HG_AUTH.login(userId, password);
           progressTitle.textContent = '로그인되었습니다';
           progressText.textContent = '관리자 대시보드로 이동합니다.';
           location.replace('../dashboard/');
         } catch (error) {
           setBusy(false);
-          message.textContent = error.message || '로그인에 실패했습니다.';
-          message.className = 'form-message error';
+          showError(error.message || '로그인에 실패했습니다.');
           document.getElementById('password').focus();
           document.getElementById('password').select();
         }
