@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08111f">
+  <title>HG TECH AC</title>
+  <link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">HG TECH AC</a>
+    <span class="stage">BASIC UI</span>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <p class="eyebrow">TECH ROOM CONTROL</p>
+      <h1>기술실 냉난방 제어</h1>
+      <p>TECH와 TECH_3D 에어컨을 각각 관리하기 위한 기본 화면입니다.</p>
+    </section>
+
+    <section class="device-grid">
+      <article class="device-card">
+        <div class="device-head">
+          <div>
+            <span class="device-id">TECH</span>
+            <h2>기술실</h2>
+          </div>
+          <span class="status">연결 전</span>
+        </div>
+        <p>기술실 본 공간의 에어컨 제어 페이지입니다.</p>
+        <dl class="summary">
+          <div><dt>전원 상태</dt><dd>확인 전</dd></div>
+          <div><dt>자동화</dt><dd>설정 전</dd></div>
+        </dl>
+        <a class="button primary" href="./TECH/">TECH 열기</a>
+      </article>
+
+      <article class="device-card">
+        <div class="device-head">
+          <div>
+            <span class="device-id">TECH_3D</span>
+            <h2>3D 작업실</h2>
+          </div>
+          <span class="status">연결 전</span>
+        </div>
+        <p>기술실 안쪽 3D 작업실의 별도 에어컨 제어 페이지입니다.</p>
+        <dl class="summary">
+          <div><dt>전원 상태</dt><dd>확인 전</dd></div>
+          <div><dt>자동화</dt><dd>설정 전</dd></div>
+        </dl>
+        <a class="button primary" href="./TECH_3D/">TECH_3D 열기</a>
+      </article>
+    </section>
+
+    <section class="notice">
+      <strong>현재 단계</strong>
+      <p>정적 화면 기본 틀만 구성되어 있습니다. Apps Script, Google Sheets, ESP32 연동은 다음 단계에서 추가합니다.</p>
+    </section>
+  </main>
+</body>
+</html>
