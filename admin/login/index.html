@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07101c">
+  <title>관리자 로그인 | HG TECH AC</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+  <script src="../../config.js"></script>
+  <script defer src="../../assets/auth.js"></script>
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-card" aria-labelledby="loginTitle">
+      <div class="brand-mark" aria-hidden="true">HG</div>
+      <p class="eyebrow">ADMIN ACCESS</p>
+      <h1 id="loginTitle">관리자 로그인</h1>
+      <p class="muted">기술실 에어컨 제어는 승인된 관리자만 사용할 수 있습니다.</p>
+
+      <form id="loginForm" class="form-stack">
+        <label>
+          관리자 ID
+          <input id="userId" name="userId" autocomplete="username" required placeholder="관리자 ID">
+        </label>
+        <label>
+          비밀번호
+          <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="비밀번호">
+        </label>
+        <button id="loginButton" class="button primary large" type="submit">로그인</button>
+      </form>
+
+      <p id="loginMessage" class="form-message" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const existing = await window.HG_AUTH.validateSession();
+      if (existing) {
+        location.replace('../dashboard/');
+        return;
+      }
+
+      const form = document.getElementById('loginForm');
+      const button = document.getElementById('loginButton');
+      const message = document.getElementById('loginMessage');
+
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        button.disabled = true;
+        message.textContent = '로그인 확인 중…';
+        message.className = 'form-message';
+
+        try {
+          await window.HG_AUTH.login(
+            document.getElementById('userId').value.trim(),
+            document.getElementById('password').value
+          );
+          message.textContent = '로그인되었습니다.';
+          message.className = 'form-message success';
+          location.replace('../dashboard/');
+        } catch (error) {
+          message.textContent = error.message;
+          message.className = 'form-message error';
+        } finally {
+          button.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
