@@ -35,3 +35,55 @@
   margin-left:auto!important;
   justify-content:flex-end;
 }
+
+/* 모바일: 상태/로그아웃 두 칸과 장치 선택창의 좌우선을 동일하게 정렬 */
+@media(max-width:760px){
+  .dashboard-topbar{
+    padding-left:24px!important;
+    padding-right:24px!important;
+  }
+
+  .dashboard-topbar .dashboard-actions{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    align-items:stretch;
+    gap:12px;
+    width:100%;
+  }
+
+  .dashboard-topbar #brokerState,
+  .dashboard-topbar #logoutButton{
+    width:100%;
+    min-width:0;
+    min-height:54px;
+    justify-content:center;
+    margin:0;
+    border-radius:16px;
+    font-size:14px;
+  }
+
+  .dashboard-topbar .device-picker{
+    grid-column:1 / -1;
+    order:initial!important;
+    width:100%;
+    margin:0;
+  }
+
+  .dashboard-topbar .device-picker-button{
+    width:100%;
+    max-width:none;
+    min-height:68px;
+    border-radius:16px;
+  }
+}
+
+@media(max-width:390px){
+  .dashboard-topbar{
+    padding-left:18px!important;
+    padding-right:18px!important;
+  }
+
+  .dashboard-topbar .dashboard-actions{
+    gap:10px;
+  }
+}
