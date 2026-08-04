@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07101c">
+  <title>관리자 대시보드 | HG TECH AC</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+  <script src="../../config.js"></script>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script defer src="../../assets/auth.js"></script>
+  <script defer src="../../assets/dashboard.js"></script>
+</head>
+<body data-page="dashboard">
+  <header class="topbar">
+    <a class="brand" href="./">HG TECH AC</a>
+    <div class="top-actions">
+      <span id="brokerState" class="stage">MQTT 확인 중</span>
+      <button id="logoutButton" class="button ghost compact" type="button">로그아웃</button>
+    </div>
+  </header>
+
+  <main class="container compact-container">
+    <section class="hero dashboard-hero">
+      <div>
+        <p class="eyebrow">ADMIN CONTROL</p>
+        <h1>기술실 에어컨</h1>
+        <p><strong id="adminName">관리자</strong>님, 제어할 장치를 선택하세요.</p>
+      </div>
+    </section>
+
+    <section id="deviceGrid" class="power-grid" aria-label="에어컨 전원 제어">
+      <article class="power-card" data-device-card="TECH_1">
+        <div class="device-line">
+          <span class="device-id">TECH_1</span>
+          <span id="mqtt-TECH_1" class="device-badge offline">미연결</span>
+        </div>
+        <h2>기술실 1번</h2>
+        <button class="power-button" type="button" data-device="TECH_1" data-name="기술실 1번">
+          <span class="power-icon" aria-hidden="true">⏻</span>
+          <span>전원 버튼</span>
+        </button>
+        <p class="command-state" id="state-TECH_1">장치 연결 대기 중</p>
+      </article>
+
+      <article class="power-card" data-device-card="TECH_2">
+        <div class="device-line">
+          <span class="device-id">TECH_2</span>
+          <span id="mqtt-TECH_2" class="device-badge offline">미연결</span>
+        </div>
+        <h2>기술실 2번</h2>
+        <button class="power-button" type="button" data-device="TECH_2" data-name="기술실 2번">
+          <span class="power-icon" aria-hidden="true">⏻</span>
+          <span>전원 버튼</span>
+        </button>
+        <p class="command-state" id="state-TECH_2">장치 연결 대기 중</p>
+      </article>
+
+      <article class="power-card" data-device-card="TECH_3D">
+        <div class="device-line">
+          <span class="device-id">TECH_3D</span>
+          <span id="mqtt-TECH_3D" class="device-badge offline">미연결</span>
+        </div>
+        <h2>3D 작업실</h2>
+        <button class="power-button" type="button" data-device="TECH_3D" data-name="3D 작업실">
+          <span class="power-icon" aria-hidden="true">⏻</span>
+          <span>전원 버튼</span>
+        </button>
+        <p class="command-state" id="state-TECH_3D">장치 연결 대기 중</p>
+      </article>
+    </section>
+
+    <section class="notice slim-notice">
+      <strong>제어 방식</strong>
+      <p>버튼을 누르면 HiveMQ의 장치별 command 토픽으로 <code>PRESS_POWER</code> 명령을 전송합니다. 장치가 미연결 상태면 오류 화면으로 이동합니다.</p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
