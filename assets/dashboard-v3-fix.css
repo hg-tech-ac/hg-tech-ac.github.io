@@ -1,1 +1,4 @@
 .power-button-icon-only{width:min(180px,64vw)!important;}
+.dashboard-topbar>.brand{display:none!important;}
+.dashboard-topbar{justify-content:flex-end;}
+.dashboard-topbar .dashboard-actions{margin-left:auto;}
