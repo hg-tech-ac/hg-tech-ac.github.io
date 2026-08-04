@@ -2,6 +2,8 @@
   "use strict";
 
   const FAILURE_DELAY_MS = 60000;
+  const SELECTED_KEY = "hgTechAcSelectedDevice";
+  const ROUTINE_PREFIX = "hgTechAcRoutine:";
   let timer = null;
 
   function showFailureModal() {
@@ -51,23 +53,56 @@
     timer = null;
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const broker = document.getElementById("brokerState");
-    if (!broker) return;
+  function saveRoutineDraft() {
+    const deviceId = localStorage.getItem(SELECTED_KEY);
+    if (!deviceId) return;
 
-    const inspect = () => {
-      if (broker.classList.contains("connected")) stopTimer();
-      else startTimer();
+    const enabled = document.getElementById("routineEnabled");
+    const onTime = document.getElementById("routineOnTime");
+    const offTime = document.getElementById("routineOffTime");
+    const dayButtons = [...document.querySelectorAll(".day-chip")];
+    if (!enabled || !onTime || !offTime) return;
+
+    const draft = {
+      enabled: enabled.checked,
+      days: dayButtons
+        .filter(button => button.classList.contains("selected"))
+        .map(button => button.dataset.day),
+      onTime: onTime.value || "07:30",
+      offTime: offTime.value || "16:00",
+      timezone: "Asia/Seoul"
     };
 
-    new MutationObserver(inspect).observe(broker, {
-      attributes: true,
-      attributeFilter: ["class"],
-      childList: true,
-      characterData: true,
-      subtree: true
+    localStorage.setItem(`${ROUTINE_PREFIX}${deviceId}`, JSON.stringify(draft));
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const broker = document.getElementById("brokerState");
+    if (broker) {
+      const inspect = () => {
+        if (broker.classList.contains("connected")) stopTimer();
+        else startTimer();
+      };
+
+      new MutationObserver(inspect).observe(broker, {
+        attributes: true,
+        attributeFilter: ["class"],
+        childList: true,
+        characterData: true,
+        subtree: true
+      });
+
+      inspect();
+    }
+
+    ["routineEnabled", "routineOnTime", "routineOffTime"].forEach(id => {
+      const control = document.getElementById(id);
+      control?.addEventListener("input", saveRoutineDraft);
+      control?.addEventListener("change", saveRoutineDraft);
     });
 
-    inspect();
+    document.querySelectorAll(".day-chip").forEach(button => {
+      button.addEventListener("click", () => setTimeout(saveRoutineDraft, 0));
+    });
   });
 })();
