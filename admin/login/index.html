@@ -4,25 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07101c">
-  <title>관리자 로그인 | HG TECH AC</title>
+  <title>관리자 로그인</title>
   <link rel="stylesheet" href="../../assets/style.css">
+  <link rel="stylesheet" href="../../assets/login-v2.css">
   <script src="../../config.js"></script>
   <script defer src="../../assets/auth.js"></script>
 </head>
 <body class="auth-page">
   <main class="auth-shell">
     <section class="auth-card" aria-labelledby="loginTitle">
-      <div class="brand-mark" aria-hidden="true">HG</div>
       <p class="eyebrow">ADMIN ACCESS</p>
       <h1 id="loginTitle">관리자 로그인</h1>
       <p class="muted">기술실 에어컨 제어는 승인된 관리자만 사용할 수 있습니다.</p>
 
       <form id="loginForm" class="form-stack">
-        <label>
+        <label for="userId">
           관리자 ID
           <input id="userId" name="userId" autocomplete="username" required placeholder="관리자 ID">
         </label>
-        <label>
+        <label for="password">
           비밀번호
           <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="비밀번호">
         </label>
@@ -33,37 +33,71 @@
     </section>
   </main>
 
+  <div id="loginProgressOverlay" class="login-progress-overlay" role="dialog" aria-modal="true" aria-labelledby="loginProgressTitle" hidden>
+    <section class="login-progress-card">
+      <div class="login-spinner" aria-hidden="true"></div>
+      <strong id="loginProgressTitle">로그인 시도중입니다</strong>
+      <p id="loginProgressText">관리자 정보를 안전하게 확인하고 있습니다.</p>
+    </section>
+  </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      const existing = await window.HG_AUTH.validateSession();
-      if (existing) {
-        location.replace('../dashboard/');
-        return;
-      }
-
       const form = document.getElementById('loginForm');
       const button = document.getElementById('loginButton');
       const message = document.getElementById('loginMessage');
+      const inputs = [...form.querySelectorAll('input, button')];
+      const overlay = document.getElementById('loginProgressOverlay');
+      const progressTitle = document.getElementById('loginProgressTitle');
+      const progressText = document.getElementById('loginProgressText');
+      let submitting = false;
+
+      function setBusy(busy, title = '로그인 시도중입니다', detail = '관리자 정보를 안전하게 확인하고 있습니다.') {
+        submitting = busy;
+        inputs.forEach(control => { control.disabled = busy; });
+        document.body.classList.toggle('login-busy', busy);
+        progressTitle.textContent = title;
+        progressText.textContent = detail;
+        overlay.hidden = !busy;
+      }
+
+      setBusy(true, '인증 상태 확인 중입니다', '기존 관리자 로그인 상태를 확인하고 있습니다.');
+      try {
+        const existing = await window.HG_AUTH.validateSession();
+        if (existing) {
+          progressTitle.textContent = '인증되었습니다';
+          progressText.textContent = '관리자 대시보드로 이동합니다.';
+          location.replace('../dashboard/');
+          return;
+        }
+      } catch (_) {
+        // 저장된 세션이 없거나 만료된 경우 일반 로그인 화면을 표시합니다.
+      }
+      setBusy(false);
+      document.getElementById('userId').focus();
 
       form.addEventListener('submit', async event => {
         event.preventDefault();
-        button.disabled = true;
-        message.textContent = '로그인 확인 중…';
+        if (submitting) return;
+
+        message.textContent = '';
         message.className = 'form-message';
+        setBusy(true, '로그인 시도중입니다', '아이디와 비밀번호를 확인하고 있습니다. 잠시만 기다려 주세요.');
 
         try {
           await window.HG_AUTH.login(
             document.getElementById('userId').value.trim(),
             document.getElementById('password').value
           );
-          message.textContent = '로그인되었습니다.';
-          message.className = 'form-message success';
+          progressTitle.textContent = '로그인되었습니다';
+          progressText.textContent = '관리자 대시보드로 이동합니다.';
           location.replace('../dashboard/');
         } catch (error) {
-          message.textContent = error.message;
+          setBusy(false);
+          message.textContent = error.message || '로그인에 실패했습니다.';
           message.className = 'form-message error';
-        } finally {
-          button.disabled = false;
+          document.getElementById('password').focus();
+          document.getElementById('password').select();
         }
       });
     });
