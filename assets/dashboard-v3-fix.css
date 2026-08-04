@@ -1,4 +1,37 @@
 .power-button-icon-only{width:min(180px,64vw)!important;}
-.dashboard-topbar>.brand{display:none!important;}
-.dashboard-topbar{justify-content:flex-end;}
-.dashboard-topbar .dashboard-actions{margin-left:auto;}
+
+/* 이전 대시보드 HTML이 캐시에 남아 있어도 상단 브랜드를 완전히 제거 */
+.dashboard-topbar>.brand,
+.dashboard-topbar>a.brand,
+.dashboard-topbar>.brand-link,
+.dashboard-topbar>.brand-wrap,
+.dashboard-topbar>.header-brand,
+.dashboard-topbar>[class*="brand"],
+.dashboard-topbar> :first-child:not(.dashboard-actions){
+  display:none!important;
+  visibility:hidden!important;
+  width:0!important;
+  min-width:0!important;
+  max-width:0!important;
+  height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  overflow:hidden!important;
+}
+
+.dashboard-topbar::before,
+.dashboard-topbar::after{
+  content:none!important;
+  display:none!important;
+}
+
+.dashboard-topbar{
+  justify-content:flex-end!important;
+}
+
+.dashboard-topbar .dashboard-actions{
+  width:100%;
+  margin-left:auto!important;
+  justify-content:flex-end;
+}
