@@ -55,14 +55,21 @@ button, input { font: inherit; }
   font-size: 11px;
   font-weight: 850;
 }
+.stage.connected {
+  color: #86efbd;
+  border-color: rgba(66, 217, 147, .32);
+  background: rgba(66, 217, 147, .11);
+}
 
 .container {
   width: min(1080px, calc(100% - 30px));
   margin: 0 auto;
   padding: 52px 0 72px;
 }
+.compact-container { width: min(980px, calc(100% - 30px)); }
 
 .hero { margin-bottom: 30px; }
+.center-hero { text-align: center; }
 .eyebrow {
   margin: 0 0 8px;
   color: var(--primary);
@@ -82,13 +89,75 @@ h2 { margin-bottom: 0; font-size: 23px; letter-spacing: -.025em; }
 .notice p,
 .muted { color: var(--muted); line-height: 1.65; }
 
+.power-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.power-card {
+  min-height: 330px;
+  padding: 25px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  text-align: center;
+  background: linear-gradient(160deg, rgba(21, 36, 58, .97), rgba(13, 25, 41, .97));
+  box-shadow: 0 18px 54px rgba(0, 0, 0, .25);
+}
+.power-card h2 { margin: 8px 0 22px; }
+.device-id {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .13em;
+}
+.power-button {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  width: 168px;
+  height: 168px;
+  margin: 0 auto;
+  border: 2px solid rgba(76, 156, 244, .52);
+  border-radius: 50%;
+  color: #dcebff;
+  background:
+    radial-gradient(circle at 40% 30%, rgba(109, 184, 255, .26), transparent 48%),
+    linear-gradient(145deg, #173555, #0b1a2b);
+  box-shadow:
+    inset 0 0 0 7px rgba(76, 156, 244, .06),
+    0 18px 34px rgba(0, 0, 0, .34),
+    0 0 30px rgba(76, 156, 244, .10);
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 900;
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+.power-button:hover {
+  transform: translateY(-2px) scale(1.015);
+  border-color: rgba(104, 181, 255, .9);
+  box-shadow:
+    inset 0 0 0 7px rgba(76, 156, 244, .09),
+    0 22px 40px rgba(0, 0, 0, .38),
+    0 0 36px rgba(76, 156, 244, .20);
+}
+.power-button:active { transform: scale(.97); }
+.power-button:disabled { opacity: .55; cursor: wait; }
+.power-button.sent {
+  color: #8cf4c2;
+  border-color: rgba(66, 217, 147, .72);
+  box-shadow: 0 0 38px rgba(66, 217, 147, .18);
+}
+.power-icon { font-size: 58px; line-height: 1; font-weight: 400; }
+.command-state { margin: 18px 0 0; color: var(--muted); font-size: 13px; }
+.command-state.success { color: #80efb8; }
+.command-state.error { color: #ff939b; }
+
 .device-grid,
 .control-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
 }
-
 .device-card,
 .panel,
 .notice {
@@ -106,12 +175,6 @@ h2 { margin-bottom: 0; font-size: 23px; letter-spacing: -.025em; }
   align-items: flex-start;
   gap: 16px;
   margin-bottom: 22px;
-}
-.device-id {
-  color: var(--primary);
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: .13em;
 }
 
 .summary {
@@ -153,6 +216,7 @@ h2 { margin-bottom: 0; font-size: 23px; letter-spacing: -.025em; }
 
 .notice { margin-top: 20px; }
 .notice p { margin: 8px 0 0; }
+.slim-notice { text-align: center; }
 
 .room-hero {
   display: flex;
@@ -203,6 +267,31 @@ input[type="time"] {
 }
 .days .active { color: var(--text); border-color: rgba(76, 156, 244, .55); background: rgba(76, 156, 244, .12); }
 
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 30;
+  min-width: min(420px, calc(100% - 30px));
+  padding: 13px 17px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  color: var(--text);
+  text-align: center;
+  background: rgba(13, 25, 41, .96);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, .35);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 12px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 860px) {
+  .power-grid { grid-template-columns: 1fr; }
+  .power-card { min-height: auto; }
+}
+
 @media (max-width: 720px) {
   .topbar { padding: 0 15px; }
   .container { padding-top: 34px; }
@@ -212,4 +301,5 @@ input[type="time"] {
   .room-hero .status { margin-top: 14px; }
   .schedule-grid { grid-template-columns: 1fr; }
   .days { grid-template-columns: repeat(4, 1fr); }
+  .power-button { width: 154px; height: 154px; }
 }
