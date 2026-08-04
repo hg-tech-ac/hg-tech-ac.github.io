@@ -1,7 +1,8 @@
 /*
- * Apps Script 웹 앱의 전체 /exec URL을 아래에 입력합니다.
- * 예: https://script.google.com/macros/s/배포ID/exec
+ * Google Apps Script 웹 앱 설정
+ * Deployment ID:
+ * AKfycbxAYYpPLK9fLlpGNKfj9xoE021IBhv38ESNyflls_kAwR_xT7y-U6veNFZ4-_eB3Eyo
  */
 window.HG_CONFIG = {
-  API_URL: ""
+  API_URL: "https://script.google.com/macros/s/AKfycbxAYYpPLK9fLlpGNKfj9xoE021IBhv38ESNyflls_kAwR_xT7y-U6veNFZ4-_eB3Eyo/exec"
 };
