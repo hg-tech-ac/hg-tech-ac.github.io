@@ -6,76 +6,145 @@
   <meta name="theme-color" content="#07101c">
   <title>관리자 대시보드 | HG TECH AC</title>
   <link rel="stylesheet" href="../../assets/style.css">
+  <link rel="stylesheet" href="../../assets/dashboard-v3.css">
   <script src="../../config.js"></script>
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
   <script defer src="../../assets/auth.js"></script>
   <script defer src="../../assets/dashboard.js"></script>
 </head>
 <body data-page="dashboard">
-  <header class="topbar">
+  <header class="topbar dashboard-topbar">
     <a class="brand" href="./">HG TECH AC</a>
-    <div class="top-actions">
+
+    <div class="top-actions dashboard-actions">
+      <div class="device-picker" id="devicePicker">
+        <button id="devicePickerButton" class="device-picker-button" type="button" aria-expanded="false" aria-controls="deviceMenu">
+          <span class="device-picker-label">장치 선택</span>
+          <strong id="devicePickerValue">연결 대기</strong>
+          <span aria-hidden="true">⌄</span>
+        </button>
+        <div id="deviceMenu" class="device-menu" hidden>
+          <div class="device-menu-title">장치 속성</div>
+          <div id="deviceMenuList" class="device-menu-list">
+            <p class="device-menu-empty">연결된 장치를 기다리는 중입니다.</p>
+          </div>
+        </div>
+      </div>
+
       <span id="brokerState" class="stage">MQTT 확인 중</span>
       <button id="logoutButton" class="button ghost compact" type="button">로그아웃</button>
     </div>
   </header>
 
-  <main class="container compact-container">
+  <main class="container compact-container dashboard-container">
     <section class="hero dashboard-hero">
       <div>
         <p class="eyebrow">ADMIN CONTROL</p>
         <h1>기술실 에어컨</h1>
-        <p><strong id="adminName">관리자</strong>님, 제어할 장치를 선택하세요.</p>
+        <p><strong id="adminName">관리자</strong>님, 위쪽의 연결된 장치를 선택해 제어하세요.</p>
       </div>
     </section>
 
-    <section id="deviceGrid" class="power-grid" aria-label="에어컨 전원 제어">
-      <article class="power-card" data-device-card="TECH_1">
-        <div class="device-line">
-          <span class="device-id">TECH_1</span>
-          <span id="mqtt-TECH_1" class="device-badge offline">미연결</span>
-        </div>
-        <h2>기술실 1번</h2>
-        <button class="power-button" type="button" data-device="TECH_1" data-name="기술실 1번">
-          <span class="power-icon" aria-hidden="true">⏻</span>
-          <span>전원 버튼</span>
-        </button>
-        <p class="command-state" id="state-TECH_1">장치 연결 대기 중</p>
-      </article>
+    <section id="deviceEmptyState" class="device-empty-state">
+      <div class="empty-state-icon" aria-hidden="true">⌁</div>
+      <h2>연결된 장치가 없습니다</h2>
+      <p>ESP32가 HiveMQ에 상태 신호를 보내면 위쪽 장치 선택 메뉴에 자동으로 표시됩니다.</p>
+    </section>
 
-      <article class="power-card" data-device-card="TECH_2">
-        <div class="device-line">
-          <span class="device-id">TECH_2</span>
-          <span id="mqtt-TECH_2" class="device-badge offline">미연결</span>
+    <section id="selectedDevicePanel" class="selected-device-panel" hidden aria-live="polite">
+      <div class="selected-device-heading">
+        <div>
+          <p class="eyebrow">SELECTED DEVICE</p>
+          <h2 id="selectedDeviceName">장치</h2>
+          <p id="selectedDeviceMeta" class="selected-device-meta">장치 상태 확인 중</p>
         </div>
-        <h2>기술실 2번</h2>
-        <button class="power-button" type="button" data-device="TECH_2" data-name="기술실 2번">
-          <span class="power-icon" aria-hidden="true">⏻</span>
-          <span>전원 버튼</span>
-        </button>
-        <p class="command-state" id="state-TECH_2">장치 연결 대기 중</p>
-      </article>
+        <span id="selectedDeviceBadge" class="device-badge offline">미연결</span>
+      </div>
 
-      <article class="power-card" data-device-card="TECH_3D">
-        <div class="device-line">
-          <span class="device-id">TECH_3D</span>
-          <span id="mqtt-TECH_3D" class="device-badge offline">미연결</span>
+      <div class="sensor-strip" aria-label="온습도 센서">
+        <div class="sensor-value">
+          <span>온도</span>
+          <strong id="selectedTemperature">--.-°C</strong>
         </div>
-        <h2>3D 작업실</h2>
-        <button class="power-button" type="button" data-device="TECH_3D" data-name="3D 작업실">
+        <div class="sensor-value">
+          <span>습도</span>
+          <strong id="selectedHumidity">--%</strong>
+        </div>
+        <div class="sensor-value wide">
+          <span>최근 상태</span>
+          <strong id="selectedLastSeen">대기 중</strong>
+        </div>
+      </div>
+
+      <div class="power-control-area">
+        <button id="selectedPowerButton" class="power-button power-button-icon-only" type="button" aria-label="선택한 에어컨 전원 버튼 누르기" disabled>
           <span class="power-icon" aria-hidden="true">⏻</span>
-          <span>전원 버튼</span>
         </button>
-        <p class="command-state" id="state-TECH_3D">장치 연결 대기 중</p>
-      </article>
+        <p class="command-state" id="selectedCommandState">장치 연결 대기 중</p>
+      </div>
+    </section>
+
+    <section class="routine-panel" aria-labelledby="routineTitle">
+      <div class="routine-heading">
+        <div>
+          <p class="eyebrow">AUTOMATION</p>
+          <h2 id="routineTitle">루틴 관리</h2>
+          <p id="routineDeviceName" class="routine-subtitle">장치를 선택하면 루틴을 설정할 수 있습니다.</p>
+        </div>
+        <label class="routine-switch">
+          <input id="routineEnabled" type="checkbox" disabled>
+          <span>사용</span>
+        </label>
+      </div>
+
+      <div class="routine-days" aria-label="루틴 실행 요일">
+        <button class="day-chip" type="button" data-day="MON" disabled>월</button>
+        <button class="day-chip" type="button" data-day="TUE" disabled>화</button>
+        <button class="day-chip" type="button" data-day="WED" disabled>수</button>
+        <button class="day-chip" type="button" data-day="THU" disabled>목</button>
+        <button class="day-chip" type="button" data-day="FRI" disabled>금</button>
+        <button class="day-chip" type="button" data-day="SAT" disabled>토</button>
+        <button class="day-chip" type="button" data-day="SUN" disabled>일</button>
+      </div>
+
+      <div class="routine-time-grid">
+        <label class="time-field">
+          <span>켜지는 시간</span>
+          <input id="routineOnTime" type="time" min="07:30" max="15:59" value="07:30" disabled>
+          <small>오전 7시 30분 이전 설정 불가</small>
+        </label>
+        <label class="time-field">
+          <span>꺼지는 시간</span>
+          <input id="routineOffTime" type="time" min="07:31" max="16:00" value="16:00" disabled>
+          <small>오후 4시 이후 설정 불가</small>
+        </label>
+      </div>
+
+      <div class="routine-actions">
+        <p id="routineMessage" class="routine-message">연결된 장치를 먼저 선택하세요.</p>
+        <button id="saveRoutineButton" class="button primary" type="button" disabled>루틴 저장</button>
+      </div>
     </section>
 
     <section class="notice slim-notice">
-      <strong>제어 방식</strong>
-      <p>버튼을 누르면 HiveMQ의 장치별 command 토픽으로 <code>PRESS_POWER</code> 명령을 전송합니다. 장치가 미연결 상태면 오류 화면으로 이동합니다.</p>
+      <strong>온도 이상 감시</strong>
+      <p>ESP32는 전원을 누르기 직전 온도를 기준값으로 저장하고, 10분 뒤 온도가 충분히 내려가지 않으면 <code>alert</code> 토픽으로 관리자에게 알립니다. 재시도 판단과 반복 감시는 ESP32에서 수행하도록 설계합니다.</p>
     </section>
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div id="modalOverlay" class="modal-overlay" hidden>
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div id="modalIcon" class="modal-icon" aria-hidden="true">!</div>
+      <h2 id="modalTitle">알림</h2>
+      <p id="modalMessage" class="modal-message"></p>
+      <div id="modalDetails" class="modal-details" hidden></div>
+      <div class="modal-actions">
+        <button id="modalSecondaryButton" class="button ghost" type="button">닫기</button>
+        <button id="modalPrimaryButton" class="button primary" type="button" hidden>확인</button>
+      </div>
+    </section>
+  </div>
 </body>
 </html>
