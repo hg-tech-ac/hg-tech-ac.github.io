@@ -8,9 +8,11 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>관리자 대시보드</title>
-  <link rel="stylesheet" href="../../assets/style.css?v=20260804-2120">
-  <link rel="stylesheet" href="../../assets/dashboard-v3.css?v=20260804-2120">
-  <link rel="stylesheet" href="../../assets/dashboard-v3-fix.css?v=20260804-2120">
+
+  <link rel="stylesheet" href="../../assets/style.css?v=20260804-2131">
+  <link rel="stylesheet" href="../../assets/dashboard-v3.css?v=20260804-2131">
+  <link rel="stylesheet" href="../../assets/dashboard-v3-fix.css?v=20260804-2131">
+
   <style>
     .dashboard-topbar > .brand,
     .dashboard-topbar > a.brand,
@@ -18,11 +20,12 @@
     .dashboard-topbar { justify-content:flex-end!important; }
     .dashboard-topbar .dashboard-actions { width:100%;margin-left:auto!important; }
   </style>
-  <script src="../../config.js?v=20260804-2120"></script>
+
+  <script src="../../config.js?v=20260804-2131"></script>
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-  <script defer src="../../assets/auth.js?v=20260804-2120"></script>
-  <script defer src="../../assets/dashboard-v3.js?v=20260804-2120"></script>
-  <script defer src="../../assets/mqtt-connection-watch.js?v=20260804-2120"></script>
+  <script defer src="../../assets/auth.js?v=20260804-2131"></script>
+  <script defer src="../../assets/dashboard-v3.js?v=20260804-2131"></script>
+  <script defer src="../../assets/mqtt-connection-watch.js?v=20260804-2131"></script>
 </head>
 <body data-page="dashboard">
   <header class="topbar dashboard-topbar">
@@ -33,6 +36,7 @@
           <strong id="devicePickerValue">연결 대기</strong>
           <span aria-hidden="true">⌄</span>
         </button>
+
         <div id="deviceMenu" class="device-menu" hidden>
           <div class="device-menu-title">장치 속성</div>
           <div id="deviceMenuList" class="device-menu-list">
@@ -121,12 +125,11 @@
         <label class="time-field">
           <span>켜지는 시간</span>
           <input id="routineOnTime" type="time" min="07:30" max="15:59" value="07:30" disabled>
-          <small>오전 7시 30분 이전 설정 불가</small>
         </label>
+
         <label class="time-field">
           <span>꺼지는 시간</span>
           <input id="routineOffTime" type="time" min="07:31" max="16:00" value="16:00" disabled>
-          <small>오후 4시 이후 설정 불가</small>
         </label>
       </div>
 
